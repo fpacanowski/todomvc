@@ -33,15 +33,14 @@ class TodoItem extends React.Component<Props, State> {
   public handleSubmit(event : React.FormEvent) {
     var val = this.state.editText.trim();
     if (val) {
-      this.props.model.save(this.props.todo, val);
+      this.props.model.save(this.props.todo.id, val);
       this.setState({editText: val, editing: false});
     } else {
-      this.props.model.destroy(this.props.todo);
+      this.props.model.destroy(this.props.todo.id);
     }
   }
 
   public handleEdit() {
-    console.log('double click!');
     this.setState({editText: this.props.todo.title, editing: true});
   }
 
@@ -98,14 +97,14 @@ class TodoItem extends React.Component<Props, State> {
             className="toggle"
             type="checkbox"
             checked={this.props.todo.completed}
-            onChange={() => {this.props.model.toggle(this.props.todo);}}
+            onChange={() => {this.props.model.toggle(this.props.todo.id);}}
           />
           <label onDoubleClick={ e => this.handleEdit() }>
             {this.props.todo.title}
           </label>
           <button
             className="destroy"
-            onClick={() => {this.props.model.destroy(this.props.todo);}}
+            onClick={() => {this.props.model.destroy(this.props.todo.id);}}
           />
         </div>
         <input

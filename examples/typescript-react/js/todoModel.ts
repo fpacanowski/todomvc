@@ -30,7 +30,7 @@ export type Todo = {
 // may not even be worth separating this logic
 // out, but we do this to demonstrate one way to
 // separate out parts of your application.
-class TodoModel {
+export class TodoModel {
 
   public key : string;
   public todos : Array<Todo>;
@@ -75,9 +75,9 @@ class TodoModel {
     this.inform();
   }
 
-  public toggle(todoToToggle : Todo) {
+  public toggle(todoId: string) {
     this.todos = this.todos.map<Todo>((todo : Todo) => {
-      return todo !== todoToToggle ?
+      return todo.id !== todoId ?
         todo :
         Utils.extend({}, todo, {completed: !todo.completed});
     });
@@ -85,17 +85,17 @@ class TodoModel {
     this.inform();
   }
 
-  public destroy(todo : Todo) {
+  public destroy(todoId: string) {
     this.todos = this.todos.filter(function (candidate) {
-      return candidate !== todo;
+      return candidate.id !== todoId;
     });
 
     this.inform();
   }
 
-  public save(todoToSave : Todo, text : string) {
+  public save(todoId: string, newTitle: string) {
     this.todos = this.todos.map(function (todo) {
-      return todo !== todoToSave ? todo : Utils.extend({}, todo, {title: text});
+      return todo.id !== todoId ? todo : Utils.extend({}, todo, {title: newTitle});
     });
 
     this.inform();
@@ -143,5 +143,3 @@ class TodoModel {
   }
 
 }
-
-export { TodoModel };
