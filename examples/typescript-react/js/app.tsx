@@ -16,20 +16,10 @@ interface Props {
   model : TodoModel;
 }
 
-interface State {
-  editing? : string;
-}
-
-
-class TodoApp extends React.Component<Props, State> {
-
-  public state: State;
+class TodoApp extends React.Component<Props, {}> {
 
   constructor(props: Props) {
     super(props);
-    this.state = {
-      editing: null
-    };
   }
 
   public componentDidMount() {
@@ -62,31 +52,6 @@ class TodoApp extends React.Component<Props, State> {
     this.props.model.toggleAll(checked);
   }
 
-  public toggle(todoToToggle : ITodo) {
-    this.props.model.toggle(todoToToggle);
-  }
-
-  public destroy(todo : ITodo) {
-    this.props.model.destroy(todo);
-  }
-
-  public edit(todo : ITodo) {
-    this.setState({editing: todo.id});
-  }
-
-  public save(todoToSave : ITodo, text : string) {
-    this.props.model.save(todoToSave, text);
-    this.setState({editing: null});
-  }
-
-  public cancel() {
-    this.setState({editing: null});
-  }
-
-  public clearCompleted() {
-    this.props.model.clearCompleted();
-  }
-
   public render() {
     const view = this.props.model.getView();
 
@@ -94,13 +59,8 @@ class TodoApp extends React.Component<Props, State> {
       return (
         <TodoItem
           key={todo.id}
+          model={this.props.model}
           todo={todo}
-          onToggle={this.toggle.bind(this, todo)}
-          onDestroy={this.destroy.bind(this, todo)}
-          onEdit={this.edit.bind(this, todo)}
-          editing={this.state.editing === todo.id}
-          onSave={this.save.bind(this, todo)}
-          onCancel={ e => this.cancel() }
         />
       );
     });

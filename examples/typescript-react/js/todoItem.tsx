@@ -8,21 +8,17 @@ import * as classNames from "classnames";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { ENTER_KEY, ESCAPE_KEY } from "./constants";
-import { ITodo } from "./todoModel";
+import { ITodo, TodoModel } from "./todoModel";
 
 interface Props {
   key : string,
   todo : ITodo;
-  editing? : boolean;
-  onSave: (val: any) => void;
-  onDestroy: () => void;
-  onEdit: ()  => void;
-  onCancel: (event : any) => void;
-  onToggle: () => void;
+  model: TodoModel;
 }
 
 interface State {
-  editText : string
+  editText: string;
+  editing: boolean;
 }
 
 class TodoItem extends React.Component<Props, State> {
@@ -31,28 +27,27 @@ class TodoItem extends React.Component<Props, State> {
 
   constructor(props : Props){
     super(props);
-    this.state = { editText: this.props.todo.title };
+    this.state = { editText: this.props.todo.title, editing: false };
   }
 
   public handleSubmit(event : React.FormEvent) {
     var val = this.state.editText.trim();
     if (val) {
-      this.props.onSave(val);
-      this.setState({editText: val});
+      this.props.model.save(this.props.todo, val);
+      this.setState({editText: val, editing: false});
     } else {
-      this.props.onDestroy();
+      this.props.model.destroy(this.props.todo);
     }
   }
 
   public handleEdit() {
-    this.props.onEdit();
-    this.setState({editText: this.props.todo.title});
+    console.log('double click!');
+    this.setState({editText: this.props.todo.title, editing: true});
   }
 
   public handleKeyDown(event : React.KeyboardEvent) {
     if (event.keyCode === ESCAPE_KEY) {
-      this.setState({editText: this.props.todo.title});
-      this.props.onCancel(event);
+      this.setState({editText: this.props.todo.title, editing: false});
     } else if (event.keyCode === ENTER_KEY) {
       this.handleSubmit(event);
     }
@@ -73,7 +68,7 @@ class TodoItem extends React.Component<Props, State> {
   public shouldComponentUpdate(nextProps : Props, nextState : State) {
     return (
       nextProps.todo !== this.props.todo ||
-      nextProps.editing !== this.props.editing ||
+      nextState.editing !== this.state.editing ||
       nextState.editText !== this.state.editText
     );
   }
@@ -84,8 +79,8 @@ class TodoItem extends React.Component<Props, State> {
    * For more info refer to notes at https://facebook.github.io/react/docs/component-api.html#setstate
    * and https://facebook.github.io/react/docs/component-specs.html#updating-componentdidupdate
    */
-  public componentDidUpdate(prevProps : Props) {
-    if (!prevProps.editing && this.props.editing) {
+  public componentDidUpdate(prevProps: Props, prevState: State) {
+    if (!prevState.editing && this.state.editing) {
       var node = (ReactDOM.findDOMNode(this.refs["editField"]) as HTMLInputElement);
       node.focus();
       node.setSelectionRange(node.value.length, node.value.length);
@@ -96,19 +91,22 @@ class TodoItem extends React.Component<Props, State> {
     return (
       <li className={classNames({
         completed: this.props.todo.completed,
-        editing: this.props.editing
+        editing: this.state.editing
       })}>
         <div className="view">
           <input
             className="toggle"
             type="checkbox"
             checked={this.props.todo.completed}
-            onChange={this.props.onToggle}
+            onChange={() => {this.props.model.toggle(this.props.todo);}}
           />
           <label onDoubleClick={ e => this.handleEdit() }>
             {this.props.todo.title}
           </label>
-          <button className="destroy" onClick={this.props.onDestroy} />
+          <button
+            className="destroy"
+            onClick={() => {this.props.model.destroy(this.props.todo);}}
+          />
         </div>
         <input
           ref="editField"
