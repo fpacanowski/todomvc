@@ -21,13 +21,12 @@ class TodoFooter extends React.Component<ITodoFooterProps, {}> {
       clearButton = (
         <button
           className="clear-completed"
-          onClick={this.props.onClearCompleted}>
+          onClick={() => {this.props.model.clearCompleted();}}>
           Clear completed
         </button>
       );
     }
 
-    const nowShowing = this.props.nowShowing;
     return (
       <footer className="footer">
         <span className="todo-count">
@@ -37,7 +36,7 @@ class TodoFooter extends React.Component<ITodoFooterProps, {}> {
           <li>
             <a
               href="#/"
-              className={classNames({selected: nowShowing === ALL_TODOS})}>
+              className={classNames({selected: this.props.activeTab === 'ALL'})}>
                 All
             </a>
           </li>
@@ -45,7 +44,7 @@ class TodoFooter extends React.Component<ITodoFooterProps, {}> {
           <li>
             <a
               href="#/active"
-              className={classNames({selected: nowShowing === ACTIVE_TODOS})}>
+              className={classNames({selected: this.props.activeTab === 'ACTIVE'})}>
                 Active
             </a>
           </li>
@@ -53,7 +52,7 @@ class TodoFooter extends React.Component<ITodoFooterProps, {}> {
           <li>
             <a
               href="#/completed"
-              className={classNames({selected: nowShowing === COMPLETED_TODOS})}>
+              className={classNames({selected: this.props.activeTab === 'COMPLETED'})}>
                 Completed
             </a>
           </li>

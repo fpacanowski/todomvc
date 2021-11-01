@@ -9,29 +9,27 @@
 declare var Router;
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { TodoModel } from "./todoModel";
+import { TodoModel, AppView, Tab } from "./todoModel";
 import { TodoFooter } from "./footer";
 import { TodoItem } from "./todoItem";
 import { ALL_TODOS, ACTIVE_TODOS, COMPLETED_TODOS, ENTER_KEY } from "./constants";
 
-class TodoApp extends React.Component<IAppProps, IAppState> {
+class TodoApp extends React.Component<{model: TodoModel}, IAppState> {
 
   public state : IAppState;
 
-  constructor(props : IAppProps) {
+  constructor(props : {model: TodoModel}) {
     super(props);
     this.state = {
-      nowShowing: ALL_TODOS,
       editing: null
     };
   }
 
   public componentDidMount() {
-    var setState = this.setState;
     var router = Router({
-      '/': setState.bind(this, {nowShowing: ALL_TODOS}),
-      '/active': setState.bind(this, {nowShowing: ACTIVE_TODOS}),
-      '/completed': setState.bind(this, {nowShowing: COMPLETED_TODOS})
+      '/': () => this.props.model.setSelectedTab('ALL'),
+      '/active': () => this.props.model.setSelectedTab('ACTIVE'),
+      '/completed': () => this.props.model.setSelectedTab('COMPLETED'),
     });
     router.init('/');
   }
@@ -43,7 +41,7 @@ class TodoApp extends React.Component<IAppProps, IAppState> {
 
     event.preventDefault();
 
-    var val = (ReactDOM.findDOMNode(this.refs["newField"]) as HTMLInputElement).value.trim();
+    const val: string = (ReactDOM.findDOMNode(this.refs["newField"]) as HTMLInputElement).value.trim();
 
     if (val) {
       this.props.model.addTodo(val);
@@ -69,7 +67,7 @@ class TodoApp extends React.Component<IAppProps, IAppState> {
     this.setState({editing: todo.id});
   }
 
-  public save(todoToSave : ITodo, text : String) {
+  public save(todoToSave : ITodo, text : string) {
     this.props.model.save(todoToSave, text);
     this.setState({editing: null});
   }
@@ -83,22 +81,9 @@ class TodoApp extends React.Component<IAppProps, IAppState> {
   }
 
   public render() {
-    var footer;
-    var main;
-    const todos = this.props.model.todos;
+    const view = this.props.model.getView();
 
-    var shownTodos = todos.filter((todo) => {
-      switch (this.state.nowShowing) {
-      case ACTIVE_TODOS:
-        return !todo.completed;
-      case COMPLETED_TODOS:
-        return todo.completed;
-      default:
-        return true;
-      }
-    });
-
-    var todoItems = shownTodos.map((todo) => {
+    var todoItems = view.todos.map((todo) => {
       return (
         <TodoItem
           key={todo.id}
@@ -113,27 +98,19 @@ class TodoApp extends React.Component<IAppProps, IAppState> {
       );
     });
 
-    // Note: It's usually better to use immutable data structures since they're
-    // easier to reason about and React works very well with them. That's why
-    // we use map(), filter() and reduce() everywhere instead of mutating the
-    // array or todo items themselves.
-    var activeTodoCount = todos.reduce(function (accum, todo) {
-      return todo.completed ? accum : accum + 1;
-    }, 0);
-
-    var completedCount = todos.length - activeTodoCount;
-
-    if (activeTodoCount || completedCount) {
+    let footer;
+    if (view.showFooter) {
       footer =
         <TodoFooter
-          count={activeTodoCount}
-          completedCount={completedCount}
-          nowShowing={this.state.nowShowing}
-          onClearCompleted={ e=> this.clearCompleted() }
+          model={this.props.model}
+          count={view.activeCount}
+          completedCount={view.completedCount}
+          activeTab={view.selectedTab}
         />;
     }
 
-    if (todos.length) {
+    let main;
+    if (view.showMain) {
       main = (
         <section className="main">
           <input
@@ -141,7 +118,7 @@ class TodoApp extends React.Component<IAppProps, IAppState> {
             className="toggle-all"
             type="checkbox"
             onChange={ e => this.toggleAll(e) }
-            checked={activeTodoCount === 0}
+            checked={view.activeCount === 0}
           />
           <label
             htmlFor="toggle-all"

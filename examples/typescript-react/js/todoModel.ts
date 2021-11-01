@@ -7,6 +7,20 @@
 
 import { Utils } from "./utils";
 
+type ModelCallback = () => void;
+
+
+export type Tab = 'ALL' | 'ACTIVE' | 'COMPLETED';
+
+export type AppView = {
+  selectedTab: Tab;
+  todos: Array<ITodo>;
+  activeCount: number;
+  completedCount: number;
+  showMain: boolean;
+  showFooter: boolean;
+};
+
 // Generic "model" object. You can use whatever
 // framework you want. For this application it
 // may not even be worth separating this logic
@@ -16,15 +30,17 @@ class TodoModel implements ITodoModel {
 
   public key : string;
   public todos : Array<ITodo>;
-  public onChanges : Array<any>;
+  public onChanges : Array<ModelCallback>;
+  public selectedTab: Tab;
 
-  constructor(key) {
+  constructor(key: string) {
     this.key = key;
     this.todos = Utils.store(key);
     this.onChanges = [];
+    this.selectedTab = 'ALL';
   }
 
-  public subscribe(onChange) {
+  public subscribe(onChange: ModelCallback) {
     this.onChanges.push(onChange);
   }
 
@@ -88,6 +104,40 @@ class TodoModel implements ITodoModel {
 
     this.inform();
   }
+
+  public setSelectedTab(tab: Tab) {
+    this.selectedTab = tab;
+    this.inform();
+  }
+
+  public getView(): AppView {
+    const shownTodos = this.todos.filter((todo) => {
+      switch (this.selectedTab) {
+        case 'ALL':
+          return true;
+        case 'ACTIVE':
+          return !todo.completed;
+        case 'COMPLETED':
+          return todo.completed;
+      }
+    });
+
+    const activeCount = this.todos.reduce(function (accum, todo) {
+      return todo.completed ? accum : accum + 1;
+    }, 0);
+
+    const completedCount = this.todos.length - activeCount;
+
+    return {
+      selectedTab: this.selectedTab,
+      todos: shownTodos,
+      activeCount,
+      completedCount,
+      showMain: shownTodos.length > 0,
+      showFooter: (activeCount > 0) || (completedCount > 0)
+    };
+  }
+
 }
 
 export { TodoModel };

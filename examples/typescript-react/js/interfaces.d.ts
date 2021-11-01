@@ -21,9 +21,9 @@ interface ITodoItemState {
 
 interface ITodoFooterProps {
   completedCount : number;
-  onClearCompleted : any;
-  nowShowing : string;
   count : number;
+  activeTab: 'ALL' | 'ACTIVE' | 'COMPLETED';
+  model: ITodoModel;
 }
 
 
@@ -47,5 +47,4 @@ interface IAppProps {
 
 interface IAppState {
   editing? : string;
-  nowShowing? : string
 }
