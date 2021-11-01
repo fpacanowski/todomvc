@@ -143,3 +143,6 @@ export class TodoModel {
   }
 
 }
+
+// HACK!
+(window as any).TodoModel = TodoModel;
