@@ -7,7 +7,7 @@
 declare var Router;
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { TodoModel, ITodo, AppView, Tab } from "./todoModel";
+import { TodoModel, Todo, AppView, Tab } from "./todoModel";
 import { TodoFooter } from "./footer";
 import { TodoItem } from "./todoItem";
 import { ALL_TODOS, ACTIVE_TODOS, COMPLETED_TODOS, ENTER_KEY } from "./constants";
@@ -70,9 +70,9 @@ class TodoApp extends React.Component<Props, {}> {
       footer =
         <TodoFooter
           model={this.props.model}
-          count={view.activeCount}
+          activeCount={view.activeCount}
           completedCount={view.completedCount}
-          activeTab={view.selectedTab}
+          selectedTab={view.selectedTab}
         />;
     }
 

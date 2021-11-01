@@ -11,16 +11,16 @@ import { TodoModel } from "./todoModel";
 import { Utils } from "./utils";
 
 interface Props {
-  completedCount : number;
-  count : number;
-  activeTab: 'ALL' | 'ACTIVE' | 'COMPLETED';
+  completedCount: number;
+  activeCount: number;
+  selectedTab: 'ALL' | 'ACTIVE' | 'COMPLETED';
   model: TodoModel;
 }
 
 class TodoFooter extends React.Component<Props, {}> {
 
   public render() {
-    var activeTodoWord = Utils.pluralize(this.props.count, 'item');
+    var activeTodoWord = Utils.pluralize(this.props.activeCount, 'item');
     var clearButton = null;
 
     if (this.props.completedCount > 0) {
@@ -36,13 +36,13 @@ class TodoFooter extends React.Component<Props, {}> {
     return (
       <footer className="footer">
         <span className="todo-count">
-          <strong>{this.props.count}</strong> {activeTodoWord} left
+          <strong>{this.props.activeCount}</strong> {activeTodoWord} left
         </span>
         <ul className="filters">
           <li>
             <a
               href="#/"
-              className={classNames({selected: this.props.activeTab === 'ALL'})}>
+              className={classNames({selected: this.props.selectedTab === 'ALL'})}>
                 All
             </a>
           </li>
@@ -50,7 +50,7 @@ class TodoFooter extends React.Component<Props, {}> {
           <li>
             <a
               href="#/active"
-              className={classNames({selected: this.props.activeTab === 'ACTIVE'})}>
+              className={classNames({selected: this.props.selectedTab === 'ACTIVE'})}>
                 Active
             </a>
           </li>
@@ -58,7 +58,7 @@ class TodoFooter extends React.Component<Props, {}> {
           <li>
             <a
               href="#/completed"
-              className={classNames({selected: this.props.activeTab === 'COMPLETED'})}>
+              className={classNames({selected: this.props.selectedTab === 'COMPLETED'})}>
                 Completed
             </a>
           </li>

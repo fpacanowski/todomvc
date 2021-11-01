@@ -12,14 +12,14 @@ export type Tab = 'ALL' | 'ACTIVE' | 'COMPLETED';
 
 export type AppView = {
   selectedTab: Tab;
-  todos: Array<ITodo>;
+  todos: Array<Todo>;
   activeCount: number;
   completedCount: number;
   showMain: boolean;
   showFooter: boolean;
 };
 
-export type ITodo = {
+export type Todo = {
   id: string,
   title: string,
   completed: boolean
@@ -33,7 +33,7 @@ export type ITodo = {
 class TodoModel {
 
   public key : string;
-  public todos : Array<ITodo>;
+  public todos : Array<Todo>;
   public onChanges : Array<ModelCallback>;
   public selectedTab: Tab;
 
@@ -68,15 +68,15 @@ class TodoModel {
     // easier to reason about and React works very well with them. That's why
     // we use map(), filter() and reduce() everywhere instead of mutating the
     // array or todo items themselves.
-    this.todos = this.todos.map<ITodo>((todo : ITodo) => {
+    this.todos = this.todos.map<Todo>((todo : Todo) => {
       return Utils.extend({}, todo, {completed: checked});
     });
 
     this.inform();
   }
 
-  public toggle(todoToToggle : ITodo) {
-    this.todos = this.todos.map<ITodo>((todo : ITodo) => {
+  public toggle(todoToToggle : Todo) {
+    this.todos = this.todos.map<Todo>((todo : Todo) => {
       return todo !== todoToToggle ?
         todo :
         Utils.extend({}, todo, {completed: !todo.completed});
@@ -85,7 +85,7 @@ class TodoModel {
     this.inform();
   }
 
-  public destroy(todo : ITodo) {
+  public destroy(todo : Todo) {
     this.todos = this.todos.filter(function (candidate) {
       return candidate !== todo;
     });
@@ -93,7 +93,7 @@ class TodoModel {
     this.inform();
   }
 
-  public save(todoToSave : ITodo, text : string) {
+  public save(todoToSave : Todo, text : string) {
     this.todos = this.todos.map(function (todo) {
       return todo !== todoToSave ? todo : Utils.extend({}, todo, {title: text});
     });

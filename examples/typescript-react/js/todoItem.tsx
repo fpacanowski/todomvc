@@ -8,11 +8,11 @@ import * as classNames from "classnames";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { ENTER_KEY, ESCAPE_KEY } from "./constants";
-import { ITodo, TodoModel } from "./todoModel";
+import { Todo, TodoModel } from "./todoModel";
 
 interface Props {
   key : string,
-  todo : ITodo;
+  todo : Todo;
   model: TodoModel;
 }
 
