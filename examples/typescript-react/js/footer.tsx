@@ -4,14 +4,20 @@
 /*jshint newcap:false */
 /*global React */
 
-/// <reference path="./interfaces.d.ts"/>
-
 import * as classNames from "classnames";
 import * as React from "react";
 import { ALL_TODOS, ACTIVE_TODOS, COMPLETED_TODOS } from "./constants";
+import { TodoModel } from "./todoModel";
 import { Utils } from "./utils";
 
-class TodoFooter extends React.Component<ITodoFooterProps, {}> {
+interface Props {
+  completedCount : number;
+  count : number;
+  activeTab: 'ALL' | 'ACTIVE' | 'COMPLETED';
+  model: TodoModel;
+}
+
+class TodoFooter extends React.Component<Props, {}> {
 
   public render() {
     var activeTodoWord = Utils.pluralize(this.props.count, 'item');

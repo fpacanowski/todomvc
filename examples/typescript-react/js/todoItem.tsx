@@ -4,18 +4,32 @@
 /*jshint newcap: false */
 /*global React */
 
-/// <reference path="./interfaces.d.ts"/>
-
 import * as classNames from "classnames";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { ENTER_KEY, ESCAPE_KEY } from "./constants";
+import { ITodo } from "./todoModel";
 
-class TodoItem extends React.Component<ITodoItemProps, ITodoItemState> {
+interface Props {
+  key : string,
+  todo : ITodo;
+  editing? : boolean;
+  onSave: (val: any) => void;
+  onDestroy: () => void;
+  onEdit: ()  => void;
+  onCancel: (event : any) => void;
+  onToggle: () => void;
+}
 
-  public state : ITodoItemState;
+interface State {
+  editText : string
+}
 
-  constructor(props : ITodoItemProps){
+class TodoItem extends React.Component<Props, State> {
+
+  public state : State;
+
+  constructor(props : Props){
     super(props);
     this.state = { editText: this.props.todo.title };
   }
@@ -56,7 +70,7 @@ class TodoItem extends React.Component<ITodoItemProps, ITodoItemState> {
    * just use it as an example of how little code it takes to get an order
    * of magnitude performance improvement.
    */
-  public shouldComponentUpdate(nextProps : ITodoItemProps, nextState : ITodoItemState) {
+  public shouldComponentUpdate(nextProps : Props, nextState : State) {
     return (
       nextProps.todo !== this.props.todo ||
       nextProps.editing !== this.props.editing ||
@@ -70,7 +84,7 @@ class TodoItem extends React.Component<ITodoItemProps, ITodoItemState> {
    * For more info refer to notes at https://facebook.github.io/react/docs/component-api.html#setstate
    * and https://facebook.github.io/react/docs/component-specs.html#updating-componentdidupdate
    */
-  public componentDidUpdate(prevProps : ITodoItemProps) {
+  public componentDidUpdate(prevProps : Props) {
     if (!prevProps.editing && this.props.editing) {
       var node = (ReactDOM.findDOMNode(this.refs["editField"]) as HTMLInputElement);
       node.focus();

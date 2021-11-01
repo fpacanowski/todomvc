@@ -3,8 +3,6 @@
 /*jshint trailing:false */
 /*jshint newcap:false */
 
-/// <reference path="./interfaces.d.ts"/>
-
 import { Utils } from "./utils";
 
 type ModelCallback = () => void;
@@ -21,12 +19,18 @@ export type AppView = {
   showFooter: boolean;
 };
 
+export type ITodo = {
+  id: string,
+  title: string,
+  completed: boolean
+};
+
 // Generic "model" object. You can use whatever
 // framework you want. For this application it
 // may not even be worth separating this logic
 // out, but we do this to demonstrate one way to
 // separate out parts of your application.
-class TodoModel implements ITodoModel {
+class TodoModel {
 
   public key : string;
   public todos : Array<ITodo>;

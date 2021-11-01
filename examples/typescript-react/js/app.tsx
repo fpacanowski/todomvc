@@ -4,21 +4,28 @@
 /*jshint newcap:false */
 /*global React, Router*/
 
-/// <reference path="./interfaces.d.ts"/>
-
 declare var Router;
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { TodoModel, AppView, Tab } from "./todoModel";
+import { TodoModel, ITodo, AppView, Tab } from "./todoModel";
 import { TodoFooter } from "./footer";
 import { TodoItem } from "./todoItem";
 import { ALL_TODOS, ACTIVE_TODOS, COMPLETED_TODOS, ENTER_KEY } from "./constants";
 
-class TodoApp extends React.Component<{model: TodoModel}, IAppState> {
+interface Props {
+  model : TodoModel;
+}
 
-  public state : IAppState;
+interface State {
+  editing? : string;
+}
 
-  constructor(props : {model: TodoModel}) {
+
+class TodoApp extends React.Component<Props, State> {
+
+  public state: State;
+
+  constructor(props: Props) {
     super(props);
     this.state = {
       editing: null
