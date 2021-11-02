@@ -1,0 +1,21 @@
+.timer {
+    font-size: 16px;
+    margin-left: 52px;
+}
+.timer span {
+    display: block;
+}
+
+.timer button, .total-time-spent button {
+    font-size: 16px;
+    color:blue;
+    text-decoration: underline;
+    cursor: pointer;
+    display: block;
+}
+
+.total-time-spent {
+    font-size: 24px;
+    font-weight: bold;
+    padding-bottom: 60px;
+}

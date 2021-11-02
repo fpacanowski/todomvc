@@ -64,13 +64,13 @@ class TodoItem extends React.Component<Props, State> {
    * just use it as an example of how little code it takes to get an order
    * of magnitude performance improvement.
    */
-  public shouldComponentUpdate(nextProps : Props, nextState : State) {
-    return (
-      nextProps.todo !== this.props.todo ||
-      nextState.editing !== this.state.editing ||
-      nextState.editText !== this.state.editText
-    );
-  }
+  // public shouldComponentUpdate(nextProps : Props, nextState : State) {
+  //   return (
+  //     nextProps.todo !== this.props.todo ||
+  //     nextState.editing !== this.state.editing ||
+  //     nextState.editText !== this.state.editText
+  //   );
+  // }
 
   /**
    * Safely manipulate the DOM after updating the state when invoking
@@ -87,6 +87,34 @@ class TodoItem extends React.Component<Props, State> {
   }
 
   public render() {
+    let startStopButton;
+    if (!this.props.todo.active) {
+      startStopButton =
+        <button
+          onClick={() => {this.props.model.markActive(this.props.todo.id);}}
+        > Start.</button>
+    } else {
+      startStopButton =
+        <button
+          onClick={() => {this.props.model.markInactive(this.props.todo.id);}}
+        > Stop.</button>
+    }
+    let pomodoroSection;
+    if (this.props.todo.active) {
+      const pomodoroTimer = this.props.todo.pomodoroTimer;
+      if (pomodoroTimer.mode == 'WORK') {
+        pomodoroSection = <span>Work left: {pomodoroTimer.timeLeft} seconds</span>
+      } else {
+        pomodoroSection = <span>Enjoy your break: {pomodoroTimer.timeLeft} seconds</span>
+      }
+    }
+    const timerSection =
+      <div className="timer"> 
+        <span>Time spent: {this.props.todo.timeSpent} seconds.</span>
+        {pomodoroSection}
+        {startStopButton}
+      </div>
+      
     return (
       <li className={classNames({
         completed: this.props.todo.completed,
@@ -106,6 +134,7 @@ class TodoItem extends React.Component<Props, State> {
             className="destroy"
             onClick={() => {this.props.model.destroy(this.props.todo.id);}}
           />
+          {timerSection}
         </div>
         <input
           ref="editField"

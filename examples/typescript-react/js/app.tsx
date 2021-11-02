@@ -113,8 +113,31 @@ class TodoApp extends React.Component<Props, {}> {
         </header>
         {main}
         {footer}
+        <section className="total-time-spent">
+          <p>Total Time Spent: {view.totalTimeSpent} seconds.</p>
+          <button
+            onClick={() => {this.updatePomodoroSettings('https://jsonkeeper.com/b/8EWN');}}
+          >
+            Load Peter's Pomodoro Profile
+          </button>
+          <button
+            onClick={() => {this.updatePomodoroSettings('https://jsonkeeper.com/b/0J1X');}}
+          >
+            Load Paula's Pomodoro Profile
+          </button>
+        </section>
       </div>
     );
+  }
+
+  private updatePomodoroSettings(url: string) {
+    fetch(url)
+      .then(response => response.json())
+      .then(data => {
+        this.props.model.updatePomodoroSettings(
+          {workTime: data.settings.work, restTime: data.settings.rest}
+        )
+      })
   }
 }
 
@@ -129,3 +152,6 @@ function render() {
 
 model.subscribe(render);
 render();
+setInterval(() => {model.tick()}, 1000);
+
+(window as any).model = model;
